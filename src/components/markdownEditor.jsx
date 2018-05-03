@@ -155,9 +155,9 @@ export default class MarkdownEditor extends Component {
         }
         <FileUpload
           hidden={asMarkdown}
-          callback={(files) => this.props.onFileUpload(files)}
-          removeCallback={(path) => this.props.onFileRemoved(path)}
-          uploadComplete={(files) => this.handleFileUpload(files)}>
+          onFileUpload={(files) => this.props.onFileUpload(files)}
+          onFileRemoved={(path) => this.props.onFileRemoved(path)}
+          onUploadComplete={(files) => this.handleFileUpload(files)}>
           {/* Always keeping this mounted so that undo/redo works with ctrl-z */}
           <textarea
             hidden={asMarkdown}

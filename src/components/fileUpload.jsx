@@ -36,7 +36,7 @@ class FileUpload extends Component {
     this.addFile = this.addFile.bind(this);
     this.removeFile = this.removeFile.bind(this);
   }
- 
+
   addFile(path) {
     if (!this.state.uploadedFiles.find(p => p === path)) {
       this.setState({
@@ -46,7 +46,7 @@ class FileUpload extends Component {
   }
 
   removeFile(path) {
-    this.props.removeCallback(path)
+    this.props.onFileRemoved(path)
       .then(res => {
         if (res.status === 200) {
           const index = this.state.uploadedFiles.findIndex(p => 
@@ -64,47 +64,57 @@ class FileUpload extends Component {
         alert("Could not remove file");
       });
   }
-  
-  handleDrop(e, callback, uploadComplete) {
+
+  handleDrop(e, uploadComplete) {
     noneShallPass(e);
     const files = e.dataTransfer.files;
     resetDropZoneStyles(e);
-    callback(files)
+    this.uploadFileList(files);
+  }
+
+  uploadFileList(fileList) {
+    this.props.onFileUpload(fileList)
       .then(res => {
+        // Automatic compatibility with Axios
         if (res.data) {
           const path = res.data.replace(/"/g,"");
           this.addFile(path);
-          uploadComplete(path);
+          this.props.onUploadComplete(path);
           return Promise.reject("Done");
         } else {
-          return res.text();
+          const path = res.replace(/"/g,"");
+          this.addFile(path);
+          this.props.onUploadComplete(path);
         }
       })
-      .then(text => {
-        const path = text.replace(/"/g,"");
-        this.addFile(path);
-        uploadComplete(path);
-      })
-      .catch(err => null); // There's gotta be a better way to do this.
+  }
+
+  onFileUploadedFromDialog(event) {
+    this.uploadFileList(event.target.files);
+  }
+
+  showFileUploadDialog() {
+    this.refs.fileInput.click();
   }
 
   render() {
-    const { hidden, children, callback, uploadComplete } = this.props;
+    const { hidden, children } = this.props;
     const uploadedFiles = this.state.uploadedFiles.map((f, i) =>
       <li key={i}>{f} <span className="remove-btn" onClick={() => this.removeFile(f)}>remove</span></li>
     );
 
     return (
       <div className="dropzone-wrap">
+        <input type="file" ref="fileInput" onChange={this.onFileUploadedFromDialog.bind(this)} style={{display: "none"}} />
         <div
           onDragEnter={handleDragEnter}
           onDragLeave={handleDragLeave}
           onDragOver={handleDragOver}
-          onDrop={(e) => this.handleDrop(e, callback, uploadComplete)}>
+          onDrop={(e) => this.handleDrop(e)}>
           {children}
         </div>
         <div className="dropzone-info" style={{display: hidden ? "none" : "inherit"}}>
-          <span>Add files by dragging and dropping into the editor.</span>
+          <span>Add files by dragging and dropping into the editor, or <a href="#" onClick={this.showFileUploadDialog.bind(this)}>click to upload a file</a></span>
           {this.state.uploadedFiles.length ? <ul>{uploadedFiles}</ul> : null}
         </div>
       </div>
