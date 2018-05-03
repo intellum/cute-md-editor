@@ -166,3 +166,8 @@ div.react-md-tab button.active {
   font-weight: bold;
   font-size: 15px;
 }
+
+.react-md-error {
+  color: red;
+  font-weight: bold;
+}

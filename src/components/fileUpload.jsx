@@ -49,8 +49,7 @@ class FileUpload extends Component {
     this.props.onFileRemoved(path)
       .then(res => {
         if (res.status === 200) {
-          const index = this.state.uploadedFiles.findIndex(p => 
-            path === p);
+          const index = this.state.uploadedFiles.findIndex(p => path === p);
 
           this.setState({
             uploadedFiles: [
@@ -60,9 +59,7 @@ class FileUpload extends Component {
           });
         }
       })
-      .catch(err => {
-        alert("Could not remove file");
-      });
+      .catch(error => this.setError(error));
   }
 
   handleDrop(e, uploadComplete) {
@@ -80,13 +77,17 @@ class FileUpload extends Component {
           const path = res.data.replace(/"/g,"");
           this.addFile(path);
           this.props.onUploadComplete(path);
-          return Promise.reject("Done");
         } else {
           const path = res.replace(/"/g,"");
           this.addFile(path);
           this.props.onUploadComplete(path);
         }
-      })
+      }).catch(error => this.setError(error));
+  }
+
+  setError(error) {
+    this.setState({error: error.toString()});
+    setTimeout(() => this.setState({error: null}), 15000);
   }
 
   onFileUploadedFromDialog(event) {
@@ -116,6 +117,9 @@ class FileUpload extends Component {
         <div className="dropzone-info" style={{display: hidden ? "none" : "inherit"}}>
           <span>Add files by dragging and dropping into the editor, or <a href="#" onClick={this.showFileUploadDialog.bind(this)}>click to upload a file</a></span>
           {this.state.uploadedFiles.length ? <ul>{uploadedFiles}</ul> : null}
+          {this.state.error &&
+              <div className="react-md-error">Error: {this.state.error}</div>
+          }
         </div>
       </div>
     );
