@@ -99,3 +99,70 @@ div.react-md-tab button.active {
   stroke: #545454;
   fill: #545454;
 }
+
+
+.react-md-toolbar-dropdown-button {
+  padding: 4px 0;
+}
+
+.react-md-toolbar-caret {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    vertical-align: middle;
+    content: "";
+    border: 4px solid;
+    border-right-color: transparent;
+    border-bottom-color: transparent;
+    border-left-color: transparent;
+}
+
+.react-md-dropdown {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 100;
+  padding: 10px 16px;
+  margin-top: 2px;
+  list-style: none;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid rgba(27,31,35,0.15);
+  border-radius: 4px;
+  box-shadow: 0 3px 12px rgba(27,31,35,0.15);
+}
+
+.react-md-dropdown ul {
+  margin: 0;
+  padding: 0;
+}
+
+.react-md-dropdown ul {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+.react-md-dropdown-option {
+  cursor: pointer;
+}
+
+.react-md-dropdown-option:hover {
+  color: #020298;
+}
+
+.react-md-header-1 {
+  font-weight: bold;
+  font-size: 22px;
+}
+
+.react-md-header-2 {
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.react-md-header-3 {
+  font-weight: bold;
+  font-size: 15px;
+}

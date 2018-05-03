@@ -28,6 +28,15 @@ export default class MarkdownEditor extends Component {
         tooltip: 'Format as link'
       },
       {
+        icon: 'headers',
+        tooltip: 'Choose header size',
+        dropdownOptions: [
+          (<li key={1} onClick={this.handleHeader.bind(this, "# ")} className="react-md-dropdown-option react-md-header-1">Header</li>),
+          (<li key={2} onClick={this.handleHeader.bind(this, "## ")} className="react-md-dropdown-option react-md-header-2">Header</li>),
+          (<li key={3} onClick={this.handleHeader.bind(this, "### ")} className="react-md-dropdown-option react-md-header-3">Header</li>)
+        ]
+      },
+      {
         icon: 'bold',
         callback: this.handleBoldButton.bind(this),
         tooltip: 'Bold text'
@@ -95,7 +104,11 @@ export default class MarkdownEditor extends Component {
   handleBoldButton() {
     this.insertContent("**", "**");
   }
-  
+
+  handleHeader(header) {
+    this.insertContent(header);
+  }
+
   handleItalicButton() {
     this.insertContent("*", "*");
   }
@@ -107,7 +120,7 @@ export default class MarkdownEditor extends Component {
   handleUnorderedList() {
     this.insertContent("- ");
   }
-  
+
   handleOrderedList() {
     this.insertContent("1. ");
   }
