@@ -105,13 +105,11 @@ export default class MarkdownEditor extends Component {
   }
 
   handleUnorderedList() {
-    const ul = "- item1\n- item2\n- item3";
-    this.insertContent(ul);
+    this.insertContent("- ");
   }
   
   handleOrderedList() {
-    const ol = "1. item1\n2. item2\n3. item3";
-    this.insertContent(ol);
+    this.insertContent("1. ");
   }
 
   render() {
