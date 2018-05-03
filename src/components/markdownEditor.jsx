@@ -62,19 +62,24 @@ export default class MarkdownEditor extends Component {
   }
 
   appendCodeBlock() {
-    const codeBlock = "\n```\n\n```";
-    this.insertContent(codeBlock, 5);
+    this.insertContent("\n```\n", "\n```");
   }
 
-  insertContent(newContent, cursorEndPosition = null) {
-    const cursorPosition = this.refs.textArea.selectionStart;
-    const { content } = this.state;
+  insertContent(contentLeft, contentRight = "") {
+    const cursorStart  = this.refs.textArea.selectionStart,
+          cursorEnd    = this.refs.textArea.selectionEnd,
+          { content }  = this.state,
+          selectedWord = content.substr(cursorStart, cursorEnd - cursorStart)
 
     this.setState({
-      content: content.slice(0, cursorPosition) + newContent + content.substr(cursorPosition)
+      content: content.slice(0, cursorStart) + contentLeft + selectedWord + contentRight + content.substr(cursorEnd)
     }, () => {
       this.refs.textArea.focus();
-      this.refs.textArea.selectionEnd = cursorPosition + (cursorEndPosition || newContent.length);
+      if (selectedWord.length == 0) {
+        this.refs.textArea.selectionEnd = cursorStart + contentLeft.length;
+      } else {
+        this.refs.textArea.selectionEnd = cursorEnd + contentLeft.length + contentRight.length;
+      }
     });
   }
 
@@ -83,18 +88,16 @@ export default class MarkdownEditor extends Component {
   }
 
   handleLinkButton() {
-    const link = "[](url)";
-    this.insertContent(link)
+    const link = "[";
+    this.insertContent("[", "](url)")
   }
 
   handleBoldButton() {
-    const boldText = "****";
-    this.insertContent(boldText, 2);
+    this.insertContent("**", "**");
   }
   
   handleItalicButton() {
-    const italicText = "**";
-    this.insertContent(italicText, 1);
+    this.insertContent("*", "*");
   }
 
   handleQuoteButton() {
