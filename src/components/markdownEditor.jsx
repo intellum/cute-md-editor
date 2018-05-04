@@ -10,24 +10,30 @@ import SvgDefinitions from './svgDefinitions';
 export default class MarkdownEditor extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
       asHTML: this.props.asHTML,
       asMarkdown: this.props.asMarkdown,
-      content: this.props.content
+      content: this.props.content,
+      toolbarOptions: this.props.toolbarOptions || ['preview-as-html', 'code', 'link', 'headers', 'italic', 'quote', 'unordered-list', 'ordered-list']
     };
+
     this.converter = new Converter();
     this.toolbarButtons = [
       {
+        id: 'code',
         icon: 'embed2',
         callback: this.appendCodeBlock.bind(this),
         tooltip: 'Format as code block'
       },
       {
+        id: 'link',
         icon: 'link',
         callback: this.handleLinkButton.bind(this),
         tooltip: 'Format as link'
       },
       {
+        id: 'headers',
         icon: 'headers',
         tooltip: 'Choose header size',
         dropdownOptions: [
@@ -37,31 +43,36 @@ export default class MarkdownEditor extends Component {
         ]
       },
       {
+        id: 'bold',
         icon: 'bold',
         callback: this.handleBoldButton.bind(this),
         tooltip: 'Bold text'
       },
       {
+        id: 'italic',
         icon: 'italic',
         callback: this.handleItalicButton.bind(this),
         tooltip: 'Italicised text'
       },
       {
+        id: 'quote',
         icon: 'quotes-left',
         callback: this.handleQuoteButton.bind(this),
         tooltip: 'Format as quote'
       },
       {
+        id: 'unordered-list',
         icon: 'list2',
         callback: this.handleUnorderedList.bind(this),
         tooltip: 'Format as unordered list'
       },
       {
+        id: 'ordered-list',
         icon: 'list-numbered',
         callback: this.handleOrderedList.bind(this),
         tooltip: 'Format as ordered list'
       }
-    ];
+    ].filter((o) => this.state.toolbarOptions.includes(o.id));
   }
 
   renderedHTML(content) {
@@ -141,6 +152,7 @@ export default class MarkdownEditor extends Component {
           showMarkdown={(asMarkdown) => this.setState({ asMarkdown: asMarkdown })}
           handleCheck={() => this.setState({ asHTML: !this.state.asHTML })}
           toolbarButtons={this.toolbarButtons}
+          toolbarOptions={this.state.toolbarOptions}
           asHTML={asHTML} />
 
         {
