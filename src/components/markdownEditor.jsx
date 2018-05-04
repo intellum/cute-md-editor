@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Showdown, { Converter } from 'showdown';
 
 import Toolbar from './toolbar';
 import FileUpload from './fileUpload';
 import SvgDefinitions from './svgDefinitions';
-
+import Preview from './preview';
 
 export default class MarkdownEditor extends Component {
   constructor(props) {
@@ -15,10 +14,10 @@ export default class MarkdownEditor extends Component {
       asHTML: this.props.asHTML,
       asMarkdown: this.props.asMarkdown,
       content: this.props.content,
+      htmlContent: "",
       toolbarOptions: this.props.toolbarOptions || ['preview-as-html', 'code', 'link', 'headers', 'italic', 'quote', 'unordered-list', 'ordered-list']
     };
 
-    this.converter = new Converter();
     this.toolbarButtons = [
       {
         id: 'code',
@@ -72,13 +71,7 @@ export default class MarkdownEditor extends Component {
         callback: this.handleOrderedList.bind(this),
         tooltip: 'Format as ordered list'
       }
-    ].filter((o) => this.state.toolbarOptions.includes(o.id));
-  }
-
-  renderedHTML(content) {
-    return {
-      __html: this.converter.makeHtml(content)
-    };
+    ];
   }
 
   appendCodeBlock() {
@@ -155,21 +148,13 @@ export default class MarkdownEditor extends Component {
           toolbarOptions={this.state.toolbarOptions}
           asHTML={asHTML} />
 
-        {
-          asMarkdown &&
-          asHTML &&
-          <div className="react-md-preview-area">
-            {this.converter.makeHtml(content)}
-          </div>
+        {asMarkdown &&
+        <Preview
+          markdown={this.state.content}
+          converter={this.props.converter}
+          asHTML={asHTML} />
         }
-        {
-          asMarkdown &&
-          !asHTML &&
-          <div
-            className="react-md-preview-area"
-            dangerouslySetInnerHTML={this.renderedHTML(content)}>
-          </div>
-        }
+
         <FileUpload
           hidden={asMarkdown}
           onFileUpload={(files) => this.props.onFileUpload(files)}
@@ -197,7 +182,7 @@ export default class MarkdownEditor extends Component {
 MarkdownEditor.defaultProps = {
   content: "",
   elementId: "",
-  elementId: "",
+  elementName: "",
   asMarkdown: false,
   asHTML: false
 };
@@ -205,9 +190,10 @@ MarkdownEditor.defaultProps = {
 MarkdownEditor.propTypes = {
   content: PropTypes.string,
   asMarkdown: PropTypes.bool,
-  asMarkdown: PropTypes.bool,
   elementId: PropTypes.string,
   elementName: PropTypes.string,
-  uploadCallback: PropTypes.func,
-  removeCallback: PropTypes.func
+  toolbarOptions: PropTypes.arrayOf(PropTypes.string),
+  onFileRemoved: PropTypes.func,
+  onFileUpload: PropTypes.func.isRequired,
+  converter: PropTypes.func.isRequired,
 };
