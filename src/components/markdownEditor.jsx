@@ -12,7 +12,7 @@ export default class MarkdownEditor extends Component {
     super(props);
     this.state = {
       asHTML: this.props.asHTML,
-      asMarkdodwn: this.props.asMarkdown,
+      asMarkdown: this.props.asMarkdown,
       content: this.props.content
     };
     this.converter = new Converter();
@@ -31,9 +31,9 @@ export default class MarkdownEditor extends Component {
         icon: 'headers',
         tooltip: 'Choose header size',
         dropdownOptions: [
-          (<li key={1} onClick={this.handleHeader.bind(this, "# ")} className="react-md-dropdown-option react-md-header-1">Header</li>),
-          (<li key={2} onClick={this.handleHeader.bind(this, "## ")} className="react-md-dropdown-option react-md-header-2">Header</li>),
-          (<li key={3} onClick={this.handleHeader.bind(this, "### ")} className="react-md-dropdown-option react-md-header-3">Header</li>)
+          { onClick: this.handleHeader.bind(this, "#"), className: "react-md-header-1", text: "Header" },
+          { onClick: this.handleHeader.bind(this, "##"), className: "react-md-header-2", text: "Header" },
+          { onClick: this.handleHeader.bind(this, "###"), className: "react-md-header-3", text: "Header" }
         ]
       },
       {

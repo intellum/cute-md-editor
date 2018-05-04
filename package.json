@@ -20,15 +20,15 @@
     "prop-types": "^15.5.10"
   },
   "peerDependencies": {
-    "react": "^15.5.4",
-    "react-dom": "^15.5.4",
+    "react": "^16.3.2",
+    "react-dom": "^16.3.2",
     "font-awesome": "^4.7.0",
     "showdown": "^1.7.1"
   },
   "devDependencies": {
     "font-awesome": "^4.7.0",
-    "react": "^15.5.4",
-    "react-dom": "^15.5.4",
+    "react": "^16.3.2",
+    "react-dom": "^16.3.2",
     "showdown": "^1.7.1",
     "babel": "^6.23.0",
     "babel-core": "^6.24.1",

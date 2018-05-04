@@ -40,11 +40,14 @@ class Toolbar extends React.Component {
       )
     });
 
-    const dropdownOptions = this.props.toolbarButtons.filter((obj) => obj.dropdownOptions).map((obj, i) => {
+    const dropdowns = this.props.toolbarButtons.filter((obj) => obj.dropdownOptions).map((obj, i) => {
+      const dropdownOptions = obj.dropdownOptions.map((opt, i) => {
+        return (<li key={i} onClick={opt.onClick} className={"react-md-dropdown-option " + opt.className}>{opt.text}</li>)
+      });
       return (
         <div key={i} ref={"dropdown-" + obj.icon} className="react-md-dropdown">
           <ul>
-            {Object.values(obj.dropdownOptions)}
+            {dropdownOptions}
           </ul>
         </div>
       )
@@ -69,7 +72,7 @@ class Toolbar extends React.Component {
           onChange={this.props.handleCheck} />
         <span className="react-md-toolbar-item">Preview as HTML</span>
         {this.props.isPreview && buttons}
-        {this.props.isPreview && dropdownOptions}
+        {this.props.isPreview && dropdowns}
       </nav>
     );
   }
