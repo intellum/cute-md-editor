@@ -92,8 +92,13 @@ export default class MarkdownEditor extends Component {
     });
   }
 
-  handleFileUpload(path) {
-    this.insertContent(`![](${path})`);
+  handleFileUpload(path, name, type) {
+    // Images can be rendered inline
+    if (type.split("/")[0] == "image") {
+      this.insertContent(`![${name}](${path})`);
+    } else {
+      this.insertContent(`[${name}](${path})`);
+    }
   }
 
   handleLinkButton() {
@@ -157,7 +162,7 @@ export default class MarkdownEditor extends Component {
           hidden={asMarkdown}
           onFileUpload={(files) => this.props.onFileUpload(files)}
           onFileRemoved={(path) => this.props.onFileRemoved(path)}
-          onUploadComplete={(files) => this.handleFileUpload(files)}>
+          onUploadComplete={(path, name, type) => this.handleFileUpload(path, name, type)}>
           {/* Always keeping this mounted so that undo/redo works with ctrl-z */}
           <textarea
             hidden={asMarkdown}

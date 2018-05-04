@@ -76,11 +76,11 @@ class FileUpload extends Component {
         if (res.data) {
           const path = res.data.replace(/"/g,"");
           this.addFile(path);
-          this.props.onUploadComplete(path);
+          this.props.onUploadComplete(path, fileList[0].name, fileList[0].type);
         } else {
           const path = res.replace(/"/g,"");
           this.addFile(path);
-          this.props.onUploadComplete(path);
+          this.props.onUploadComplete(path, fileList[0].name, fileList[0].type);
         }
       }).catch(error => this.setError(error));
   }
@@ -101,7 +101,12 @@ class FileUpload extends Component {
   render() {
     const { hidden, children } = this.props;
     const uploadedFiles = this.state.uploadedFiles.map((f, i) =>
-      <li key={i}>{f} <span className="remove-btn" onClick={() => this.removeFile(f)}>remove</span></li>
+      <li key={i}>
+        {f}
+        {this.props.onFileRemoved &&
+          <span className="remove-btn" onClick={() => this.removeFile(f)}>remove</span>
+        }
+      </li>
     );
 
     return (
