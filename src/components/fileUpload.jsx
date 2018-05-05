@@ -104,13 +104,13 @@ class FileUpload extends Component {
       <li key={i}>
         {f}
         {this.props.onFileRemoved &&
-          <span className="remove-btn" onClick={() => this.removeFile(f)}>remove</span>
+          <span className="react-md-remove-btn" onClick={() => this.removeFile(f)}>remove</span>
         }
       </li>
     );
 
     return (
-      <div className="dropzone-wrap">
+      <div className="react-md-dropzone-wrap">
         <input type="file" ref="fileInput" onChange={this.onFileUploadedFromDialog.bind(this)} style={{display: "none"}} />
         <div
           onDragEnter={handleDragEnter}
@@ -119,7 +119,7 @@ class FileUpload extends Component {
           onDrop={(e) => this.handleDrop(e)}>
           {children}
         </div>
-        <div className="dropzone-info" style={{display: hidden ? "none" : "inherit"}}>
+        <div className="react-md-dropzone-info" style={{display: hidden ? "none" : "inherit"}}>
           <span>Add files by dragging and dropping into the editor, or <a href="#" onClick={this.showFileUploadDialog.bind(this)}>click to upload a file</a></span>
           {this.state.uploadedFiles.length ? <ul>{uploadedFiles}</ul> : null}
           {this.state.error &&

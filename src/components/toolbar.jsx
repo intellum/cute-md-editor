@@ -31,8 +31,8 @@ class Toolbar extends React.Component {
             title={obj.tooltip}
             onClick={(event) => { obj.dropdownOptions ? this.handleDropdown(event.currentTarget, obj) : obj.callback()}}
             className={"react-md-toolbar-button" + (obj.dropdownOptions ? " react-md-toolbar-dropdown-button" : "")}>
-            <svg className={`icon icon-${obj.icon}`}>
-              <use xlinkHref={`#icon-${obj.icon}`}></use>
+            <svg className={`react-md-icon react-md-icon-${obj.icon}`}>
+              <use xlinkHref={`#react-md-icon-${obj.icon}`}></use>
             </svg>
             {obj.dropdownOptions &&
                 <span className="react-md-toolbar-caret"></span>
