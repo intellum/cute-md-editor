@@ -99,15 +99,21 @@ class FileUpload extends Component {
   }
 
   render() {
-    const { hidden, children } = this.props;
-    const uploadedFiles = this.state.uploadedFiles.map((f, i) =>
-      <li key={i}>
-        {f}
-        {this.props.onFileRemoved &&
-          <span className="react-md-remove-btn" onClick={() => this.removeFile(f)}>remove</span>
-        }
-      </li>
-    );
+    const { hidden, children, showUploadedFiles, onFileRemoved } = this.props;
+    var uploadedFiles;
+
+    if (showUploadedFiles) {
+      uploadedFiles = this.state.uploadedFiles.map((f, i) =>
+        <li key={i}>
+          {f}&nbsp;
+          {onFileRemoved &&
+            <span className="react-md-remove-btn" onClick={() => this.removeFile(f)}>remove</span>
+          }
+        </li>
+      );
+    } else {
+      uploadedFiles = [];
+    }
 
     return (
       <div className="react-md-dropzone-wrap">
@@ -121,7 +127,7 @@ class FileUpload extends Component {
         </div>
         <div className="react-md-dropzone-info" style={{display: hidden ? "none" : "inherit"}}>
           <span>Add files by dragging and dropping into the editor, or <a href="#" onClick={this.showFileUploadDialog.bind(this)}>click to upload a file</a></span>
-          {this.state.uploadedFiles.length ? <ul>{uploadedFiles}</ul> : null}
+          {showUploadedFiles && this.state.uploadedFiles.length ? <ul>{uploadedFiles}</ul> : null}
           {this.state.error &&
               <div className="react-md-error">Error: {this.state.error}</div>
           }

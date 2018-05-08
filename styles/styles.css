@@ -8,14 +8,14 @@
   width: 100%;
   height: 25em;
   border: 1px solid #ddd;
-  border-bottom: 1px dashed #ddd;
+  border-top: none;
   border-radius: 2px;
 }
 
 .react-md-toolbar {
   font-size: 9pt;
   height: 29px;
-  margin-bottom: 3px;
+  margin-bottom: 0;
   border-bottom: 1px solid #ddd;
 }
 
@@ -27,8 +27,8 @@ div.react-md-tab button {
   margin: 2px;
   margin-top: 0;
 
-  border-top-left-radius: 2px; 
-  border-top-right-radius: 2px; 
+  border-top-left-radius: 2px;
+  border-top-right-radius: 2px;
   border: none;
   border-bottom: 1px solid #ddd;
 
@@ -66,14 +66,19 @@ div.react-md-tab button.active {
 }
 
 .react-md-toolbar-button:hover {
- box-shadow: 0 1px 10px #ddd;  
+ box-shadow: 0 1px 10px #ddd;
 }
 
 .react-md-preview-area {
   border: 1px solid #ddd;
+  border-top: none;
   min-height: 15em;
   padding: 1em;
   position: relative;
+}
+
+.react-md-preview-area img {
+  max-width: 100%;
 }
 
 .react-md-dropzone-wrap .react-md-remove-btn {
@@ -85,8 +90,7 @@ div.react-md-tab button.active {
   background: #f7f7f7;
   color: #92a1ad;
   font-size: 12px;
-  margin: 0;
-  margin-top: -3px;
+  margin-top: -4px;
   padding: 0.5rem;
   border-bottom: 1px solid #ddd;
   border-left: 1px solid #ddd;

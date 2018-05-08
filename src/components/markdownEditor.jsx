@@ -161,12 +161,14 @@ export default class MarkdownEditor extends Component {
         {asMarkdown &&
         <Preview
           markdown={this.state.content}
+          previewClass={this.props.previewClass}
           converter={this.props.converter}
           asHTML={asHTML} />
         }
 
         <FileUpload
           hidden={asMarkdown}
+          showUploadedFiles={this.props.showUploadedFiles}
           onFileUpload={(files) => this.props.onFileUpload(files)}
           onFileRemoved={(path) => this.props.onFileRemoved(path)}
           onUploadComplete={(path, name, type) => this.handleFileUpload(path, name, type)}>
@@ -194,12 +196,16 @@ MarkdownEditor.defaultProps = {
   elementId: "",
   elementName: "",
   asMarkdown: false,
-  asHTML: false
+  asHTML: false,
+  previewClass: "",
+  showUploadedFiles: true
 };
 
 MarkdownEditor.propTypes = {
   content: PropTypes.string,
+  previewClass: PropTypes.string,
   asMarkdown: PropTypes.bool,
+  showUploadedFiles: PropTypes.bool,
   elementId: PropTypes.string,
   elementName: PropTypes.string,
   toolbarOptions: PropTypes.arrayOf(PropTypes.string),
