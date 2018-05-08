@@ -78,17 +78,27 @@ export default class MarkdownEditor extends Component {
     this.insertContent("\n```\n", "\n```");
   }
 
-  insertContent(contentLeft, contentRight = "") {
+  insertContent(contentLeft, contentRight = "", applyToEachLine = false) {
     const cursorStart  = this.refs.textArea.selectionStart,
           cursorEnd    = this.refs.textArea.selectionEnd,
           { content }  = this.state,
-          selectedWord = content.substr(cursorStart, cursorEnd - cursorStart)
+          selectedContent = content.substr(cursorStart, cursorEnd - cursorStart);
+    var newContent;
+
+    if (applyToEachLine && selectedContent.length > 0 && (selectedContent.match(/\n/g) || []).length > 1) {
+      var lines = selectedContent.split("\n");
+      newContent = lines.map((l) => {
+        return contentLeft + l + contentRight;
+      }).join("\n");
+    } else {
+      newContent = contentLeft + selectedContent + contentRight;
+    }
 
     this.setState({
-      content: content.slice(0, cursorStart) + contentLeft + selectedWord + contentRight + content.substr(cursorEnd)
+      content: content.slice(0, cursorStart) + newContent + content.substr(cursorEnd)
     }, () => {
       this.refs.textArea.focus();
-      if (selectedWord.length == 0) {
+      if (selectedContent.length == 0) {
         this.refs.textArea.selectionEnd = cursorStart + contentLeft.length;
       } else {
         this.refs.textArea.selectionEnd = cursorEnd + contentLeft.length + contentRight.length;
@@ -123,15 +133,15 @@ export default class MarkdownEditor extends Component {
   }
 
   handleQuoteButton() {
-    this.insertContent("> ");
+    this.insertContent("> ", "", true);
   }
 
   handleUnorderedList() {
-    this.insertContent("- ");
+    this.insertContent("- ", "", true);
   }
 
   handleOrderedList() {
-    this.insertContent("1. ");
+    this.insertContent("1. ", "", true);
   }
 
   render() {
