@@ -26,6 +26,7 @@ div.react-md-tab {
 div.react-md-tab button {
   margin: 2px;
   margin-top: 0;
+  margin-bottom: 0;
 
   border-top-left-radius: 2px;
   border-top-right-radius: 2px;
@@ -38,6 +39,10 @@ div.react-md-tab button {
   cursor: pointer;
   height: 30px;
   min-width: 5em;
+}
+
+.react-md-tab button.active {
+  box-shadow: none;
 }
 
 div.react-md-tab button:first-child {

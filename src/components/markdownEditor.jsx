@@ -82,7 +82,8 @@ export default class MarkdownEditor extends Component {
     const cursorStart  = this.refs.textArea.selectionStart,
           cursorEnd    = this.refs.textArea.selectionEnd,
           { content }  = this.state,
-          selectedContent = content.substr(cursorStart, cursorEnd - cursorStart);
+          selectedContent = content.substr(cursorStart, cursorEnd - cursorStart),
+          scrollPosition = this.refs.textArea.scrollTop;
     var newContent;
 
     if (applyToEachLine && selectedContent.length > 0 && (selectedContent.match(/\n/g) || []).length > 1) {
@@ -94,14 +95,17 @@ export default class MarkdownEditor extends Component {
       newContent = contentLeft + selectedContent + contentRight;
     }
 
+
     this.setState({
       content: content.slice(0, cursorStart) + newContent + content.substr(cursorEnd)
     }, () => {
       this.refs.textArea.focus();
+      this.refs.textArea.scrollTop = scrollPosition;
       if (selectedContent.length == 0) {
         this.refs.textArea.selectionEnd = cursorStart + contentLeft.length;
       } else {
-        this.refs.textArea.selectionEnd = cursorEnd + contentLeft.length + contentRight.length;
+        this.refs.textArea.selectionStart = cursorStart + contentLeft.length;
+        this.refs.textArea.selectionEnd = cursorEnd + contentLeft.length;
       }
     });
   }
