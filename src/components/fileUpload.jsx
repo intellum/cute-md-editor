@@ -1,9 +1,7 @@
 import React, { Component }  from 'react';
 
 const resetDropZoneStyles = (e) => {
-  e.target.style.background = "#fff";
-  e.target.style.border = "1px solid #ddd";
-  e.target.style.borderBottom = "1px dashed #ddd";
+  e.target.classList.remove("react-md-textarea-drag");
 }
 
 const noneShallPass = (e) => {
@@ -13,8 +11,7 @@ const noneShallPass = (e) => {
 
 const handleDragEnter = (e) => {
   noneShallPass(e);
-  e.target.style.border = "2px dashed #8ed091";
-  e.target.style.background = "aliceblue";
+  e.target.classList.add("react-md-textarea-drag");
 }
 
 const handleDragLeave = (e) => {

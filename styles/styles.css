@@ -12,6 +12,11 @@
   border-radius: 2px;
 }
 
+.react-md-textarea-drag {
+  border: 2px dashed #8ed091;
+  background: aliceblue;
+}
+
 .react-md-toolbar {
   font-size: 9pt;
   height: 29px;
