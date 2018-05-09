@@ -45,10 +45,6 @@ div.react-md-tab button {
   min-width: 5em;
 }
 
-.react-md-tab button.active {
-  box-shadow: none;
-}
-
 div.react-md-tab button:first-child {
   margin-left: 0;
 }
@@ -56,7 +52,6 @@ div.react-md-tab button:first-child {
 div.react-md-tab button.active {
   border: 1px solid #ddd;
   border-bottom: none;
-  box-shadow: 4px 0 8px -4px #ddd, -4px 0 8px -4px #ddd;
 }
 
 .react-md-toolbar-item {
@@ -104,17 +99,6 @@ div.react-md-tab button.active {
   border-bottom: 1px solid #ddd;
   border-left: 1px solid #ddd;
   border-right: 1px solid #ddd;
-}
-
-.react-md-dropzone-info a {
-  text-decoration: underline;
-  color: blue;
-}
-
-.react-md-dropzone-info a:hover,
-.react-md-dropzone-info a:active,
-.react-md-dropzone-info a:visited {
-  color: blue;
 }
 
 .react-md-info-text {
