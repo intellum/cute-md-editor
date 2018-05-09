@@ -83,6 +83,8 @@ export default class MarkdownEditor extends Component {
   }
 
   applyTag(contentLeft, contentRight = "", options = {}) {
+    this.addTextAreaHistory(this.state.content);
+
     const {applyAtLineStart = false, applyMultiline = false, toggle = false} = options;
 
     const cursorStart     = this.refs.textArea.selectionStart,
@@ -128,7 +130,6 @@ export default class MarkdownEditor extends Component {
     this.setState({
       content: previousContent + newContent + content.substr(cursorEnd)
     }, () => {
-      this.registerTextAreaChange(this.state.content, true);
       this.refs.textArea.focus();
       this.refs.textArea.scrollTop = scrollPosition;
       if (selectedContent.length == 0) {
@@ -191,10 +192,12 @@ export default class MarkdownEditor extends Component {
   }
 
   handleUndo() {
+    console.log("handleUndo");
     if (this.state.contentHistory.past.length === 0) {
       return;
     }
     var { past, future } = this.state.contentHistory;
+    console.log(past, future);
     future.unshift(this.state.content);
 
     var nextState = {
@@ -235,16 +238,17 @@ export default class MarkdownEditor extends Component {
 
   onTextAreaChange(event) {
     this.setState({ content: event.target.value });
-    this.registerTextAreaChange(event.target.value);
+
+    if (this.lastRegisteredHistory === undefined || this.lastRegisteredHistory < Date.now() - 3000) {
+      this.addTextAreaHistory(this.state.content);
+    }
   }
 
-  registerTextAreaChange(content, forceHistory = false) {
-    if (!forceHistory && this.lastHistoryRegistered && this.lastHistoryRegistered > (Date.now() - 3000)) {
-      return;
-    }
-
-    this.lastHistoryRegistered = Date.now();
+  addTextAreaHistory(content) {
+    this.lastRegisteredHistory = Date.now();
+    console.log("addTextAreaHistory");
     const past = this.state.contentHistory.past.slice(Math.max(this.state.contentHistory.past.length - 10, 0)).concat([content]);
+    console.log(past);
     this.setState({
       contentHistory: {
         past: past,
