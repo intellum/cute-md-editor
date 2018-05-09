@@ -117,6 +117,23 @@ div.react-md-tab button.active {
   color: blue;
 }
 
+.react-md-info-text {
+  display: flex;
+  flex-direction: row;
+}
+
+.react-md-file-guide {
+  order: 0;
+  flex-basis: 100%;
+}
+
+.react-md-markdown-guide {
+  order: 1;
+  margin-left: 10px;
+  flex-basis: auto;
+  flex-shrink: 0;
+}
+
 .react-md-icon {
   display: inline-block;
   width: 1.3em;

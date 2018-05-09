@@ -172,6 +172,7 @@ export default class MarkdownEditor extends Component {
 
         <FileUpload
           hidden={asMarkdown}
+          markdownGuideUrl={this.props.markdownGuideUrl}
           showUploadedFiles={this.props.showUploadedFiles}
           onFileUpload={(files) => this.props.onFileUpload(files)}
           onFileRemoved={(path) => this.props.onFileRemoved(path)}
@@ -202,12 +203,14 @@ MarkdownEditor.defaultProps = {
   asMarkdown: false,
   asHTML: false,
   previewClass: "",
-  showUploadedFiles: true
+  showUploadedFiles: true,
+  markdownGuideUrl: "https://daringfireball.net/projects/markdown/syntax"
 };
 
 MarkdownEditor.propTypes = {
   content: PropTypes.string,
   previewClass: PropTypes.string,
+  markdownGuideUrl: PropTypes.string,
   asMarkdown: PropTypes.bool,
   showUploadedFiles: PropTypes.bool,
   elementId: PropTypes.string,

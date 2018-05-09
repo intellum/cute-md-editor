@@ -83,7 +83,7 @@ class FileUpload extends Component {
   }
 
   setError(error) {
-    this.setState({error: error.toString()});
+    this.setState({error: error.toString().replace(/error: /i, "")});
     setTimeout(() => this.setState({error: null}), 15000);
   }
 
@@ -96,7 +96,7 @@ class FileUpload extends Component {
   }
 
   render() {
-    const { hidden, children, showUploadedFiles, onFileRemoved } = this.props;
+    const { hidden, children, showUploadedFiles, onFileRemoved, markdownGuideUrl } = this.props;
     var uploadedFiles;
 
     if (showUploadedFiles) {
@@ -123,7 +123,10 @@ class FileUpload extends Component {
           {children}
         </div>
         <div className="react-md-dropzone-info" style={{display: hidden ? "none" : "inherit"}}>
-          <span>Add files by dragging and dropping into the editor, or <a href="#" onClick={this.showFileUploadDialog.bind(this)}>click to upload a file</a></span>
+          <div className="react-md-info-text">
+            <span className="react-md-file-guide">Add files by dragging and dropping into the editor, or <a href="#" onClick={this.showFileUploadDialog.bind(this)}>click to upload a file</a></span>
+            <a className="react-md-markdown-guide" href={markdownGuideUrl} target="_blank">markdown guide</a>
+          </div>
           {showUploadedFiles && this.state.uploadedFiles.length ? <ul>{uploadedFiles}</ul> : null}
           {this.state.error &&
               <div className="react-md-error">Error: {this.state.error}</div>
