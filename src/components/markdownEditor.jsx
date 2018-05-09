@@ -14,6 +14,10 @@ export default class MarkdownEditor extends Component {
       asHTML: this.props.asHTML,
       asMarkdown: this.props.asMarkdown,
       content: this.props.content,
+      contentHistory: {
+        past: [],
+        future: []
+      },
       htmlContent: "",
       toolbarOptions: this.props.toolbarOptions || ['preview-as-html', 'code', 'link', 'headers', 'italic', 'quote', 'unordered-list', 'ordered-list']
     };
@@ -124,6 +128,7 @@ export default class MarkdownEditor extends Component {
     this.setState({
       content: previousContent + newContent + content.substr(cursorEnd)
     }, () => {
+      this.registerTextAreaChange(this.state.content, true);
       this.refs.textArea.focus();
       this.refs.textArea.scrollTop = scrollPosition;
       if (selectedContent.length == 0) {
@@ -173,6 +178,81 @@ export default class MarkdownEditor extends Component {
     this.applyTag("1. ", "", {applyAtLineStart: true, applyMultiline: true});
   }
 
+  handleUndoMixinKeyDown(ev) {
+    if (document.activeElement == this.refs.textArea) {
+      if ((ev.which === 90 && ev.shiftKey && (ev.ctrlKey || ev.altKey || ev.metaKey))) {
+        ev.preventDefault();
+        this.handleRedo();
+      } else if ((ev.which === 90 && (ev.ctrlKey || ev.altKey || ev.metaKey))) {
+        ev.preventDefault();
+        this.handleUndo();
+      }
+    }
+  }
+
+  handleUndo() {
+    if (this.state.contentHistory.past.length === 0) {
+      return;
+    }
+    var { past, future } = this.state.contentHistory;
+    future.unshift(this.state.content);
+
+    var nextState = {
+      content: past.pop(),
+      contentHistory: {
+        past: past,
+        future: future
+      }
+    }
+    this.setState(nextState);
+  }
+
+  handleRedo() {
+    if (this.state.contentHistory.future.length === 0) {
+      return;
+    }
+    var { past, future } = this.state.contentHistory;
+    past.push(this.state.content);
+
+    var nextState = {
+      content: future.shift(),
+      contentHistory: {
+        past: past,
+        future: future
+      }
+    }
+    this.setState(nextState);
+  }
+
+
+  componentDidMount() {
+    document.addEventListener('keydown', this.handleUndoMixinKeyDown.bind(this));
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('keydown', this.handleUndoMixinKeyDown.bind(this));
+  }
+
+  onTextAreaChange(event) {
+    this.setState({ content: event.target.value });
+    this.registerTextAreaChange(event.target.value);
+  }
+
+  registerTextAreaChange(content, forceHistory = false) {
+    if (!forceHistory && this.lastHistoryRegistered && this.lastHistoryRegistered > (Date.now() - 3000)) {
+      return;
+    }
+
+    this.lastHistoryRegistered = Date.now();
+    const past = this.state.contentHistory.past.slice(Math.max(this.state.contentHistory.past.length - 10, 0)).concat([content]);
+    this.setState({
+      contentHistory: {
+        past: past,
+        future: []
+      }
+    });
+  }
+
   render() {
     const { asHTML, asMarkdown, content } = this.state;
 
@@ -207,7 +287,7 @@ export default class MarkdownEditor extends Component {
             hidden={asMarkdown}
             ref="textArea"
             className="react-md-textarea"
-            onChange={(event) => this.setState({ content: event.target.value }) }
+            onChange={(event) => this.onTextAreaChange(event)}
             value={content} />
         </FileUpload>
         <textarea
