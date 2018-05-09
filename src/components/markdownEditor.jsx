@@ -36,9 +36,9 @@ export default class MarkdownEditor extends Component {
         icon: 'headers',
         tooltip: 'Choose header size',
         dropdownOptions: [
-          { onClick: this.handleHeader.bind(this, "#"), className: "react-md-header-1", text: "Header" },
-          { onClick: this.handleHeader.bind(this, "##"), className: "react-md-header-2", text: "Header" },
-          { onClick: this.handleHeader.bind(this, "###"), className: "react-md-header-3", text: "Header" }
+          { onClick: this.handleHeader.bind(this, "# "), className: "react-md-header-1", text: "Header" },
+          { onClick: this.handleHeader.bind(this, "## "), className: "react-md-header-2", text: "Header" },
+          { onClick: this.handleHeader.bind(this, "### "), className: "react-md-header-3", text: "Header" }
         ]
       },
       {
@@ -75,37 +75,62 @@ export default class MarkdownEditor extends Component {
   }
 
   appendCodeBlock() {
-    this.insertContent("\n```\n", "\n```");
+    this.applyTag("\n```\n", "\n```");
   }
 
-  insertContent(contentLeft, contentRight = "", applyToEachLine = false) {
-    const cursorStart  = this.refs.textArea.selectionStart,
-          cursorEnd    = this.refs.textArea.selectionEnd,
-          { content }  = this.state,
-          selectedContent = content.substr(cursorStart, cursorEnd - cursorStart),
-          scrollPosition = this.refs.textArea.scrollTop;
-    var newContent;
+  applyTag(contentLeft, contentRight = "", options = {}) {
+    const {applyAtLineStart = false, applyMultiline = false, toggle = false} = options;
 
-    if (applyToEachLine && selectedContent.length > 0 && (selectedContent.match(/\n/g) || []).length > 1) {
+    const cursorStart     = this.refs.textArea.selectionStart,
+          { content }     = this.state,
+          selectedContent = content.substr(cursorStart, this.refs.textArea.selectionEnd - cursorStart),
+          scrollPosition  = this.refs.textArea.scrollTop;
+
+    var newContent      = "",
+        isRemoved       = false,
+        previousContent = content.slice(0, cursorStart),
+        cursorEnd       = this.refs.textArea.selectionEnd;
+
+    if (toggle &&
+      content.substr(cursorStart - contentLeft.length, contentLeft.length) == contentLeft &&
+      content.substr(cursorEnd, contentRight.length) == contentRight) {
+      previousContent = previousContent.substr(0, previousContent.length - contentLeft.length);
+      cursorEnd = cursorEnd + contentRight.length;
+      newContent = selectedContent;
+      isRemoved = true;
+    } else if (applyMultiline && selectedContent.length > 0 && (selectedContent.match(/\n/g) || []).length > 1) {
       var lines = selectedContent.split("\n");
       newContent = lines.map((l) => {
         return contentLeft + l + contentRight;
       }).join("\n");
+    } else if (applyAtLineStart) {
+      if (cursorStart > 0 && content.substr(cursorStart - 1, 1) != "\n") {
+        const lastNewLineIndex = previousContent.lastIndexOf("\n");
+
+        if (lastNewLineIndex > -1) {
+          previousContent = content.slice(0, lastNewLineIndex + 1);
+        } else {
+          previousContent = "";
+        }
+        newContent = contentLeft + content.substr(lastNewLineIndex + 1, cursorStart) + selectedContent + contentRight;
+      } else {
+        newContent = contentLeft + selectedContent + contentRight;
+      }
     } else {
       newContent = contentLeft + selectedContent + contentRight;
     }
 
 
     this.setState({
-      content: content.slice(0, cursorStart) + newContent + content.substr(cursorEnd)
+      content: previousContent + newContent + content.substr(cursorEnd)
     }, () => {
       this.refs.textArea.focus();
       this.refs.textArea.scrollTop = scrollPosition;
       if (selectedContent.length == 0) {
-        this.refs.textArea.selectionEnd = cursorStart + contentLeft.length;
+        this.refs.textArea.selectionEnd = previousContent.length + contentLeft.length;
       } else {
-        this.refs.textArea.selectionStart = cursorStart + contentLeft.length;
-        this.refs.textArea.selectionEnd = cursorEnd + contentLeft.length;
+        this.refs.textArea.selectionStart = previousContent.length + (isRemoved ? 0 : contentLeft.length);
+        this.refs.textArea.selectionEnd = previousContent.length + newContent.length - (isRemoved ? 0 : contentRight.length);
       }
     });
   }
@@ -113,39 +138,39 @@ export default class MarkdownEditor extends Component {
   handleFileUpload(path, name, type) {
     // Images can be rendered inline
     if (type.split("/")[0] == "image") {
-      this.insertContent(`![${name}](${path})`);
+      this.applyTag(`![${name}](${path})`);
     } else {
-      this.insertContent(`[${name}](${path})`);
+      this.applyTag(`[${name}](${path})`);
     }
   }
 
   handleLinkButton() {
     const link = "[";
-    this.insertContent("[", "](url)")
+    this.applyTag("[", "](url)")
   }
 
   handleBoldButton() {
-    this.insertContent("**", "**");
+    this.applyTag("**", "**", {toggle: true});
   }
 
   handleHeader(header) {
-    this.insertContent(header);
+    this.applyTag(header, "", {applyAtLineStart: true, toggle: false});
   }
 
   handleItalicButton() {
-    this.insertContent("*", "*");
+    this.applyTag("_", "_", {toggle: true});
   }
 
   handleQuoteButton() {
-    this.insertContent("> ", "", true);
+    this.applyTag("> ", "", {applyAtLineStart: true, applyMultiline: true});
   }
 
   handleUnorderedList() {
-    this.insertContent("- ", "", true);
+    this.applyTag("- ", "", {applyAtLineStart: true, applyMultiline: true});
   }
 
   handleOrderedList() {
-    this.insertContent("1. ", "", true);
+    this.applyTag("1. ", "", {applyAtLineStart: true, applyMultiline: true});
   }
 
   render() {
