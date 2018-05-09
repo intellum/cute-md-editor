@@ -22,7 +22,7 @@ class Toolbar extends React.Component {
 
   render() {
     const buttons = this.props.toolbarButtons.
-      filter((obj) => this.props.toolbarOptions.includes(obj.id)).
+      filter((obj) => this.props.toolbarOptions.indexOf(obj.id) > -1).
       map((obj, i) => {
         return (
           <button
@@ -67,7 +67,7 @@ class Toolbar extends React.Component {
             className={this.props.isPreview ? "react-md-tablinks" : "react-md-tablinks active"}
             onClick={() => this.props.showMarkdown(true)}>Preview</button>
         </div>
-        {this.props.toolbarOptions.includes("preview-as-html") &&
+        {this.props.toolbarOptions.indexOf("preview-as-html") > -1 &&
           <span>
             <input
               name="Preview as HTML"
