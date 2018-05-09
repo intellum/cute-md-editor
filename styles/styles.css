@@ -127,9 +127,9 @@ div.react-md-tab button.active {
   fill: #545454;
 }
 
-
 .react-md-toolbar-dropdown-button {
   padding: 4px 0;
+  width: 28px;
 }
 
 .react-md-toolbar-caret {

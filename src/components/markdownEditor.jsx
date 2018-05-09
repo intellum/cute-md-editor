@@ -98,12 +98,9 @@ export default class MarkdownEditor extends Component {
       cursorEnd = cursorEnd + contentRight.length;
       newContent = selectedContent;
       isRemoved = true;
-    } else if (applyMultiline && selectedContent.length > 0 && (selectedContent.match(/\n/g) || []).length > 1) {
-      var lines = selectedContent.split("\n");
-      newContent = lines.map((l) => {
-        return contentLeft + l + contentRight;
-      }).join("\n");
     } else if (applyAtLineStart) {
+      var innerContent = "";
+
       if (cursorStart > 0 && content.substr(cursorStart - 1, 1) != "\n") {
         const lastNewLineIndex = previousContent.lastIndexOf("\n");
 
@@ -112,9 +109,17 @@ export default class MarkdownEditor extends Component {
         } else {
           previousContent = "";
         }
-        newContent = contentLeft + content.substr(lastNewLineIndex + 1, cursorStart) + selectedContent + contentRight;
+        innerContent = content.slice(lastNewLineIndex + 1, cursorStart) + selectedContent;
       } else {
-        newContent = contentLeft + selectedContent + contentRight;
+        innerContent = selectedContent;
+      }
+
+      if (applyMultiline && innerContent.length > 0 && (innerContent.match(/\n/g) || []).length >= 1) {
+        newContent = innerContent.split("\n").map((l) => {
+          return contentLeft + l + contentRight;
+        }).join("\n");
+      } else {
+        newContent = contentLeft + innerContent + contentRight;
       }
     } else {
       newContent = contentLeft + selectedContent + contentRight;
