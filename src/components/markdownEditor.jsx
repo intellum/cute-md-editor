@@ -85,17 +85,22 @@ export default class MarkdownEditor extends Component {
   applyTag(contentLeft, contentRight = "", options = {}) {
     this.addTextAreaHistory(this.state.content);
 
-    const {applyAtLineStart = false, applyMultiline = false, toggle = false} = options;
+    const {applyAtLineStart = false, applyMultiline = false, toggle = false, selectionEndOffset = null, selectionLength = null} = options;
 
     const cursorStart     = this.refs.textArea.selectionStart,
           { content }     = this.state,
-          selectedContent = content.substr(cursorStart, this.refs.textArea.selectionEnd - cursorStart),
           scrollPosition  = this.refs.textArea.scrollTop;
 
     var newContent      = "",
         isRemoved       = false,
         previousContent = content.slice(0, cursorStart),
+        selectedContent = content.substr(cursorStart, this.refs.textArea.selectionEnd - cursorStart),
         cursorEnd       = this.refs.textArea.selectionEnd;
+
+    if (selectedContent.match(/\n$/ig)) {
+      selectedContent = selectedContent.replace(/\n$/ig, "");
+      cursorEnd -= 1;
+    }
 
     if (toggle &&
       content.substr(cursorStart - contentLeft.length, contentLeft.length) == contentLeft &&
@@ -131,7 +136,6 @@ export default class MarkdownEditor extends Component {
       newContent = contentLeft + selectedContent + contentRight;
     }
 
-
     this.setState({
       content: previousContent + newContent + content.substr(cursorEnd)
     }, () => {
@@ -140,8 +144,15 @@ export default class MarkdownEditor extends Component {
       if (selectedContent.length == 0) {
         this.refs.textArea.selectionEnd = previousContent.length + contentLeft.length;
       } else {
-        this.refs.textArea.selectionStart = previousContent.length + (isRemoved ? 0 : contentLeft.length);
-        this.refs.textArea.selectionEnd = previousContent.length + newContent.length - (isRemoved ? 0 : contentRight.length);
+        var selectionStart = previousContent.length + (isRemoved ? 0 : contentLeft.length),
+            selectionEnd = previousContent.length + newContent.length - (isRemoved ? 0 : contentRight.length);
+
+        if (selectionEndOffset && selectionLength) {
+          selectionStart = selectionEnd + selectionEndOffset;
+          selectionEnd = selectionStart + selectionLength;
+        }
+        this.refs.textArea.selectionStart = selectionStart;
+        this.refs.textArea.selectionEnd = selectionEnd;
       }
     });
   }
@@ -157,7 +168,7 @@ export default class MarkdownEditor extends Component {
 
   handleLinkButton() {
     const link = "[";
-    this.applyTag("[", "](url)")
+    this.applyTag("[", "](url)", {selectionEndOffset: 2, selectionLength: 3})
   }
 
   handleBoldButton() {
@@ -184,7 +195,7 @@ export default class MarkdownEditor extends Component {
     this.applyTag("1. ", "", {applyAtLineStart: true, applyMultiline: true});
   }
 
-  handleUndoMixinKeyDown(ev) {
+  handleKeyDown(ev) {
     if (document.activeElement == this.refs.textArea) {
       if ((ev.which === 90 && ev.shiftKey && (ev.ctrlKey || ev.altKey || ev.metaKey))) {
         ev.preventDefault();
@@ -192,6 +203,15 @@ export default class MarkdownEditor extends Component {
       } else if ((ev.which === 90 && (ev.ctrlKey || ev.altKey || ev.metaKey))) {
         ev.preventDefault();
         this.handleUndo();
+      } else if ((ev.which === 66 && (ev.ctrlKey || ev.metaKey))) {
+        ev.preventDefault();
+        this.handleBoldButton();
+      } else if ((ev.which === 73 && (ev.ctrlKey || ev.metaKey))) {
+        ev.preventDefault();
+        this.handleItalicButton();
+      } else if ((ev.which === 75 && (ev.ctrlKey || ev.metaKey))) {
+        ev.preventDefault();
+        this.handleLinkButton();
       }
     }
   }
@@ -232,11 +252,11 @@ export default class MarkdownEditor extends Component {
 
 
   componentDidMount() {
-    document.addEventListener('keydown', this.handleUndoMixinKeyDown.bind(this));
+    document.addEventListener('keydown', this.handleKeyDown.bind(this));
   }
 
   componentWillUnmount() {
-    document.removeEventListener('keydown', this.handleUndoMixinKeyDown.bind(this));
+    document.removeEventListener('keydown', this.handleKeyDown.bind(this));
   }
 
   onTextAreaChange(event) {
