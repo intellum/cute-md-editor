@@ -6,9 +6,23 @@ import FileUpload from './fileUpload';
 import SvgDefinitions from './svgDefinitions';
 import Preview from './preview';
 
+class PasteHandler {
+  onPaste(func) {
+    this.onPasteCallback = func;
+  }
+
+  pasteTriggered(event) {
+    if (this.onPasteCallback) {
+      this.onPasteCallback(event);
+    }
+  }
+}
+
 export default class MarkdownEditor extends Component {
   constructor(props) {
     super(props);
+
+    this.pasteHandler = new PasteHandler();
 
     this.state = {
       asHTML: this.props.asHTML,
@@ -196,24 +210,26 @@ export default class MarkdownEditor extends Component {
   }
 
   handleKeyDown(ev) {
-    if (document.activeElement == this.refs.textArea) {
-      if ((ev.which === 90 && ev.shiftKey && (ev.ctrlKey || ev.altKey || ev.metaKey))) {
-        ev.preventDefault();
-        this.handleRedo();
-      } else if ((ev.which === 90 && (ev.ctrlKey || ev.altKey || ev.metaKey))) {
-        ev.preventDefault();
-        this.handleUndo();
-      } else if ((ev.which === 66 && (ev.ctrlKey || ev.metaKey))) {
-        ev.preventDefault();
-        this.handleBoldButton();
-      } else if ((ev.which === 73 && (ev.ctrlKey || ev.metaKey))) {
-        ev.preventDefault();
-        this.handleItalicButton();
-      } else if ((ev.which === 75 && (ev.ctrlKey || ev.metaKey))) {
-        ev.preventDefault();
-        this.handleLinkButton();
-      }
+    if ((ev.which === 90 && ev.shiftKey && (ev.ctrlKey || ev.altKey || ev.metaKey))) {
+      ev.preventDefault();
+      this.handleRedo();
+    } else if ((ev.which === 90 && (ev.ctrlKey || ev.altKey || ev.metaKey))) {
+      ev.preventDefault();
+      this.handleUndo();
+    } else if ((ev.which === 66 && (ev.ctrlKey || ev.metaKey))) {
+      ev.preventDefault();
+      this.handleBoldButton();
+    } else if ((ev.which === 73 && (ev.ctrlKey || ev.metaKey))) {
+      ev.preventDefault();
+      this.handleItalicButton();
+    } else if ((ev.which === 75 && (ev.ctrlKey || ev.metaKey))) {
+      ev.preventDefault();
+      this.handleLinkButton();
     }
+  }
+
+  handlePaste(event) {
+    this.pasteHandler.pasteTriggered(event);
   }
 
   handleUndo() {
@@ -252,11 +268,13 @@ export default class MarkdownEditor extends Component {
 
 
   componentDidMount() {
-    document.addEventListener('keydown', this.handleKeyDown.bind(this));
+    this.refs.textArea.addEventListener('keydown', this.handleKeyDown.bind(this));
+    this.refs.textArea.addEventListener('paste', this.handlePaste.bind(this));
   }
 
   componentWillUnmount() {
-    document.removeEventListener('keydown', this.handleKeyDown.bind(this));
+    this.refs.textArea.removeEventListener('keydown', this.handleKeyDown.bind(this));
+    this.refs.textArea.removeEventListener('paste', this.handlePaste.bind(this));
   }
 
   onTextAreaChange(event) {
@@ -301,6 +319,7 @@ export default class MarkdownEditor extends Component {
         }
 
         <FileUpload
+          pasteHandler={this.pasteHandler}
           hidden={asMarkdown}
           markdownGuideUrl={this.props.markdownGuideUrl}
           showUploadedFiles={this.props.showUploadedFiles}

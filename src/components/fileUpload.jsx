@@ -34,6 +34,15 @@ class FileUpload extends Component {
     this.removeFile = this.removeFile.bind(this);
   }
 
+  componentDidMount() {
+    this.props.pasteHandler.onPaste((event) => {
+      let clipboardData = event.clipboardData || window.clipboardData;
+      if (clipboardData && clipboardData.files.length > 0) {
+        this.uploadFileList(clipboardData.files);
+      }
+    });
+  }
+
   addFile(path) {
     if (!this.state.uploadedFiles.find(p => p === path)) {
       this.setState({
