@@ -28,10 +28,12 @@ class FileUpload extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      uploadedFiles: []
+      uploadedFiles: [],
+      uploadingFiles: []
     };
     this.addFile = this.addFile.bind(this);
     this.removeFile = this.removeFile.bind(this);
+    this.fileId = 0;
   }
 
   componentDidMount() {
@@ -76,8 +78,14 @@ class FileUpload extends Component {
   }
 
   uploadFileList(fileList) {
-    this.props.onFileUpload(fileList)
+    this.fileId++;
+    const fileId = this.fileId;
+
+    this.uploadProgressUpdate(fileId, 0, fileList[0].name);
+
+    this.props.onFileUpload(fileList, this.uploadProgressUpdate.bind(this, fileId))
       .then(res => {
+        this.markUploadAsStopped(fileId);
         // Automatic compatibility with Axios
         if (res.data) {
           const path = res.data.replace(/"/g,"");
@@ -88,7 +96,27 @@ class FileUpload extends Component {
           this.addFile(path);
           this.props.onUploadComplete(path, fileList[0].name, fileList[0].type);
         }
-      }).catch(error => this.setError(error));
+      }).catch(error => {
+        this.markUploadAsStopped(fileId);
+        this.setError(error)
+      });
+  }
+
+  markUploadAsStopped(id) {
+    var { uploadingFiles } = this.state;
+    this.setState({uploadingFiles: uploadingFiles.filter((f) => f.id != id)});
+  }
+
+  uploadProgressUpdate(id, progress, name = null) {
+    var { uploadingFiles } = this.state,
+        file = uploadingFiles.find((f) => f.id == id);
+    if (file) {
+      file.progress = progress;
+    } else {
+      uploadingFiles.push({id: id, name: name, progress: progress});
+    }
+
+    this.setState({uploadingFiles: uploadingFiles});
   }
 
   setError(error) {
@@ -106,7 +134,7 @@ class FileUpload extends Component {
 
   render() {
     const { hidden, children, showUploadedFiles, onFileRemoved, markdownGuideUrl } = this.props;
-    var uploadedFiles;
+    var uploadedFiles, uploadingFiles;
 
     if (showUploadedFiles) {
       uploadedFiles = this.state.uploadedFiles.map((f, i) =>
@@ -120,6 +148,16 @@ class FileUpload extends Component {
     } else {
       uploadedFiles = [];
     }
+
+    uploadingFiles = this.state.uploadingFiles.map((f, i) =>
+      <li key={i}>
+        Uploading {f.name}
+        <span className="react-md-progress">
+          <span className="react-md-progress-value" style={{width: f.progress + "%"}}></span>
+        </span>
+        {f.progress}%
+      </li>
+    );
 
     return (
       <div className="react-md-dropzone-wrap">
@@ -136,7 +174,12 @@ class FileUpload extends Component {
             <span className="react-md-file-guide">Add files by dragging and dropping into the editor, or <a href="#" onClick={this.showFileUploadDialog.bind(this)}>click to upload a file</a></span>
             <a className="react-md-markdown-guide" href={markdownGuideUrl} target="_blank">markdown guide</a>
           </div>
-          {showUploadedFiles && this.state.uploadedFiles.length ? <ul>{uploadedFiles}</ul> : null}
+          {uploadingFiles && uploadingFiles.length > 0 &&
+              <ul>{uploadingFiles}</ul>
+          }
+          {showUploadedFiles && showUploadedFiles.length > 0 &&
+              <ul>{uploadedFiles}</ul>
+          }
           {this.state.error &&
               <div className="react-md-error">Error: {this.state.error}</div>
           }

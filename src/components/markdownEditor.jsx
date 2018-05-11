@@ -323,7 +323,7 @@ export default class MarkdownEditor extends Component {
           hidden={asMarkdown}
           markdownGuideUrl={this.props.markdownGuideUrl}
           showUploadedFiles={this.props.showUploadedFiles}
-          onFileUpload={(files) => this.props.onFileUpload(files)}
+          onFileUpload={(files, callback) => this.props.onFileUpload(files, callback)}
           onFileRemoved={(path) => this.props.onFileRemoved(path)}
           onUploadComplete={(path, name, type) => this.handleFileUpload(path, name, type)}>
           {/* Always keeping this mounted so that undo/redo works with ctrl-z */}
