@@ -322,6 +322,7 @@ export default class MarkdownEditor extends Component {
           pasteHandler={this.pasteHandler}
           hidden={asMarkdown}
           markdownGuideUrl={this.props.markdownGuideUrl}
+          showUploadMessage={this.props.showUploadMessage}
           showUploadedFiles={this.props.showUploadedFiles}
           onFileUpload={(files, callback) => this.props.onFileUpload(files, callback)}
           onFileRemoved={(path) => this.props.onFileRemoved(path)}
@@ -352,6 +353,7 @@ MarkdownEditor.defaultProps = {
   asMarkdown: false,
   asHTML: false,
   previewClass: "",
+  showUploadMessage: true,
   showUploadedFiles: true,
   markdownGuideUrl: "https://daringfireball.net/projects/markdown/syntax"
 };
@@ -360,6 +362,7 @@ MarkdownEditor.propTypes = {
   content: PropTypes.string,
   previewClass: PropTypes.string,
   markdownGuideUrl: PropTypes.string,
+  showUploadMessage: PropTypes.bool,
   asMarkdown: PropTypes.bool,
   showUploadedFiles: PropTypes.bool,
   elementId: PropTypes.string,
