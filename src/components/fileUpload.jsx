@@ -133,7 +133,7 @@ class FileUpload extends Component {
   }
 
   render() {
-    const { hidden, children, showUploadedFiles, onFileRemoved, markdownGuideUrl } = this.props;
+    const { hidden, children, showUploadedFiles, onFileRemoved, markdownGuideUrl, showUploadMessage } = this.props;
     var uploadedFiles, uploadingFiles;
 
     if (showUploadedFiles) {
@@ -171,7 +171,9 @@ class FileUpload extends Component {
         </div>
         <div className="react-md-dropzone-info" style={{display: hidden ? "none" : "inherit"}}>
           <div className="react-md-info-text">
+            {showUploadMessage &&
             <span className="react-md-file-guide">Add files by dragging and dropping onto the editor, <a href="#" onClick={this.showFileUploadDialog.bind(this)}>selecting a file</a> or pasting from the clipboard.</span>
+            }
             <a className="react-md-markdown-guide" href={markdownGuideUrl} target="_blank">markdown guide</a>
           </div>
           {uploadingFiles && uploadingFiles.length > 0 &&
