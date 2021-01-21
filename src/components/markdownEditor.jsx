@@ -54,7 +54,6 @@ export default class MarkdownEditor extends Component {
         icon: 'headers',
         tooltip: 'Choose header size',
         dropdownOptions: [
-          { onClick: this.handleHeader.bind(this, "# "), className: "react-md-header-1", text: "Header" },
           { onClick: this.handleHeader.bind(this, "## "), className: "react-md-header-2", text: "Header" },
           { onClick: this.handleHeader.bind(this, "### "), className: "react-md-header-3", text: "Header" }
         ]
